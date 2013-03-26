@@ -90,12 +90,7 @@ module AbaNumbers
       end
 
       res = https.request_get uri.request_uri
-
-      if res.code == '200'
-        File.open(path, 'w') { |f| f.puts res.body }
-      else
-        raise "Invalid response code [#{res.code}] from request to [#{url}]"
-      end
+      File.open(path, 'w') { |f| f.puts res.body }
     end
 
     def read_local_file

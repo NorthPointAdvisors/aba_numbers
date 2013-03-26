@@ -1,12 +1,14 @@
-# AbaNumbersDb
+# AbaNumbers
 
-TODO: Write a gem description
+Get a list of Federal Reserve E-Payments Routing Directory from the Federal Reserve Financial Services.
+This database will provide you with a known list of financial entities and their ABA (routing) numbers plus other useful information like bank name, city, state, etc.
+You can also get a way to validate an unknown ABA number through a simple formula.
 
 ## Installation
 
 Add this line to your application's Gemfile:
 
-    gem 'aba_numbers_db'
+    gem 'aba_numbers'
 
 And then execute:
 
@@ -14,7 +16,7 @@ And then execute:
 
 Or install it yourself as:
 
-    $ gem install aba_numbers_db
+    $ gem install aba_numbers
 
 ## Usage
 

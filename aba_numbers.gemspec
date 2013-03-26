@@ -10,7 +10,7 @@ Gem::Specification.new do |gem|
   gem.email         = %w(aemadrid@gmail.com)
   gem.description   = %q{Get a list of Federal Reserve E-Payments Routing Directory}
   gem.summary       = %q{Get a list of Federal Reserve E-Payments Routing Directory from the Federal Reserve Financial Services}
-  gem.homepage      = ''
+  gem.homepage      = 'https://github.com/NorthPointAdvisors/aba_numbers'
 
   gem.files         = `git ls-files`.split($/)
   gem.executables   = gem.files.grep(%r{^bin/}).map{ |f| File.basename(f) }
