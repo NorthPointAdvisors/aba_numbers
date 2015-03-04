@@ -10,21 +10,31 @@ describe AbaNumbers::Database do
   let(:row1) { AbaNumbers::Database::Row.new line1 }
   let(:row2) { AbaNumbers::Database::Row.new line2 }
 
-  before(:all) { File.open(tmp_path, 'w') { |f| f.puts "#{line1}\n#{line2}" } }
-  after(:all) { FileUtils.rm tmp_path }
+  before(:each) do
+    File.open(tmp_path, 'w') { |f| f.puts "#{line1}\n#{line2}" }
+  end
+
+  after(:each) do
+    FileUtils.rm tmp_path
+  end
 
   describe 'basic' do
-    it { db.url.should == AbaNumbers::Database::FEDERAL_URL }
+    it { db.url.should == AbaNumbers::Database::ABA_URL }
     it { db.path.should == tmp_path }
-    it { db.file?.should be_true }
+    it { db.file?.should == true }
     it { db.line_count.should == 2 }
-    it { db.needs_getting_file?.should be_false }
-    it { db.instance_variable_get(:@data).should be_nil }
+    it { db.needs_getting_file?.should == false }
+    it { db.instance_variable_get(:@data).should == nil }
   end
 
   describe 'processing' do
-    before(:all) { db.data }
-    after(:all) { db.instance_variable_set :@data, nil }
+    before(:each) do
+      db.data
+    end
+
+    after(:each) do
+      db.instance_variable_set :@data, nil
+    end
     it { db.data.size.should == 2 }
     it { db.data.size.should == db.line_count }
     it { db.data[row1.aba_number].should == row1 }
@@ -52,9 +62,9 @@ describe AbaNumbers::Database do
       it { row1.name.should == 'FIRST FEDERAL SAVINGS & LOAN OF PA' }
       it { row1.state.should == 'WA' }
       it { row1.city.should == 'PORT ANBELES' }
-      it { row1.funds_transfer.should be_true }
-      it { row1.settlement_only.should be_false }
-      it { row1.securities.should be_false }
+      it { row1.funds_transfer.should == true }
+      it { row1.settlement_only.should == false }
+      it { row1.securities.should == false }
       it { row1.last_updated.to_s.should == '2006-06-14' }
       it { row1.to_s.should == "#<AbaNumbers::Database::Row aba_number=\"325170835\" short_name=\"FBT FSL PT ANBEL\" name=\"FIRST FEDERAL SAVINGS & LOAN OF PA\" state=\"WA\" city=\"PORT ANBELES\" funds_transfer=true settlement_only=false securities=false last_updated=2006-06-14>" }
       it { row1.to_s.should == row1.inspect }
@@ -67,12 +77,11 @@ describe AbaNumbers::Database do
       it { row2.name.should == 'ALASKA PASIFIC BANK' }
       it { row2.state.should == 'AK' }
       it { row2.city.should == 'JUBEAU' }
-      it { row2.funds_transfer.should be_true }
-      it { row2.settlement_only.should be_false }
-      it { row2.securities.should be_false }
-      it { row2.last_updated.should be_nil }
+      it { row2.funds_transfer.should == true }
+      it { row2.settlement_only.should == false }
+      it { row2.securities.should == false }
+      it { row2.last_updated.should == nil }
       it { row2.to_s.should == exp_to_s }
-      it { row2.should == other }
     end
   end
 

@@ -4,6 +4,7 @@ require 'openssl'
 require 'date'
 require 'net/http'
 require 'net/https'
+require 'net/ftp'
 
 module AbaNumbers
   class Database
@@ -65,10 +66,10 @@ module AbaNumbers
 
     attr_reader :url, :path
 
-    FEDERAL_URL = 'https://www.fededirectory.frb.org/fpddir.txt'
+    ABA_URL = 'ftp://ftp.pfgltd.com/aba/fpddir.txt'
 
     def initialize(url = nil, path = nil)
-      @url  = url || FEDERAL_URL
+      @url  = url || ABA_URL
       @path = path || File.join(AbaNumbers::DB_PATH, 'fpddir.txt')
     end
 
@@ -81,16 +82,25 @@ module AbaNumbers
     end
 
     def get_file_from_url
-      uri   = URI url
-      https = Net::HTTP.new uri.host, uri.port
-
-      if uri.scheme == 'https'
-        https.use_ssl     = true
-        https.verify_mode = OpenSSL::SSL::VERIFY_NONE
+      uri = URI url
+      if uri.scheme == 'ftp'
+        file = uri.path.partition('/').last
+        file_dir = "/#{uri.path.partition('/').first}"
+        Net::FTP.open("#{uri.host}") do |ftp|
+          ftp.login
+          ftp.passive = true
+          ftp.chdir file_dir
+          ftp.gettextfile("#{file}", "#{Rails.root}/tmp/#{file}")
+          ftp.close
+        end
+      elsif uri.scheme == 'https'
+        Net::HTTP.new uri.host, uri.port do |https|
+          https.use_ssl     = true
+          https.verify_mode = OpenSSL::SSL::VERIFY_NONE
+          res = https.request_get uri.request_uri
+          File.open(path, 'w') { |f| f.puts res.body }
+        end
       end
-
-      res = https.request_get uri.request_uri
-      File.open(path, 'w') { |f| f.puts res.body }
     end
 
     def read_local_file
